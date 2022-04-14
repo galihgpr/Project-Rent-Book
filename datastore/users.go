@@ -11,12 +11,12 @@ type UserDB struct {
 	Db *gorm.DB
 }
 
-func (u *UserDB) GetAllDataUser() ([]entities.Users, error) {
+func (u *UserDB) GetAllDataUser() (string, error) {
 	res := []entities.Users{}
 
 	if err := u.Db.Table("users").Find(&res).Error; err != nil {
 		fmt.Println("Terjadi kesalahan memasukkan user", err)
-		return []entities.Users{}, err
+		return newUser.Email, err
 	}
-	return res, nil
+	return "Pendaftaran Berhasil", nil
 }

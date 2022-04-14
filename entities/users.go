@@ -11,3 +11,7 @@ type Users struct {
 	Password string
 	Hp       string
 }
+
+func (u Users) Emon() string {
+	return u.Email
+}

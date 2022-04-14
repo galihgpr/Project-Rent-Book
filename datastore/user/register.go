@@ -1,7 +1,8 @@
 package user
 
 import (
-	"fmt"
+	// "intro-golang/entities"
+
 	"intro-golang/entities"
 
 	"gorm.io/gorm"
@@ -11,11 +12,18 @@ type UserDB struct {
 	Db *gorm.DB
 }
 
-func (u *UserDB) Register(newUser entities.Users) (entities.Users, error) {
-	u.Db.AutoMigrate(&entities.Users{})
-	if err := u.Db.Create(&newUser).Error; err != nil {
-		fmt.Println("Terjadi kesalahan saat insert user", err)
-		return newUser, err
+func (u *UserDB) Register(newUser entities.Users) (string, error) {
+	user := []entities.Users{}
+
+	if err := u.Db.Table("users").Where("email = ?", newUser.Email).Find(&user).Error; err != nil {
+		return "Akses Database User Gagal", err
 	}
-	return newUser, nil
+	if len(user) != 0 {
+		return "Registrasi Gagal, email " + newUser.Email + " telah terdaftar", nil
+	} else {
+		if err := u.Db.Create(&newUser).Error; err != nil {
+			return "Pendaftaran Gagal", err
+		}
+	}
+	return "Pendaftaran Berhasil", nil
 }
