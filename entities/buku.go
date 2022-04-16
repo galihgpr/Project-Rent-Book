@@ -4,9 +4,9 @@ import "gorm.io/gorm"
 
 type Buku struct {
 	gorm.Model
-	NameBuku string
-	Author   string
-	Status   bool
-	IDUser   uint
-	Pinjam   []Pinjam `gorm:"foreignKey:IDBuku"`
+	NameBuku string `gorm:"unique;not null"`
+	Author   string `gorm:not null"`
+	Jumlah   int    `gorm:default:0`
+	UserID   uint
+	Pinjam   Pinjam `gorm:"foreignkey:BukuID;references:id`
 }

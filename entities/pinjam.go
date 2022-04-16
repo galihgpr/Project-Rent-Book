@@ -8,8 +8,8 @@ import (
 
 type Pinjam struct {
 	gorm.Model
-	IDBuku              uint
-	IDUser              uint
+	BukuID              uint
+	UserID              uint
 	nameBuku            string
 	TanggalPinjam       time.Time
 	TanggalPengembalian time.Time

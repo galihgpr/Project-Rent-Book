@@ -6,9 +6,10 @@ import (
 
 type Users struct {
 	gorm.Model
-	HP       string
-	NamaUser string
-	Password string
-	Buku     []Buku   `gorm:"foreignKey:IDUser"`
-	Pinjam   []Pinjam `gorm:"foreignKey:IDUser"`
+	Nama     string
+	Email    string   `gorm:"unique;not null"`
+	HP       string   `gorm:"unique;not null"`
+	Password string   `gorm:not null"`
+	Buku     []Buku   `gorm:"foreignkey:UserID;references:id"`
+	Pinjam   []Pinjam `gorm:"foreignkey:UserID;references:id"`
 }
