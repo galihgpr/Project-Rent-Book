@@ -142,6 +142,6 @@ func BuatBuku(user entities.Users) {
 
 func main() {
 	// DBcon := config.ConnectDB()
-	// DBcon.AutoMigrate(entities.Buku{}, entities.Pinjam{})
+	// DBcon.AutoMigrate(entities.Users{}, entities.Buku{}, entities.Pinjam{})
 	TampilanMenuUtama()
 }

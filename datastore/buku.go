@@ -52,5 +52,6 @@ func (b *BukuDB) ListBuku(user entities.Users) (entities.Buku, error) {
 	for i, v := range buku {
 		fmt.Println(i+1, " ", strings.ToUpper(v.NameBuku))
 	}
+	fmt.Println("99 Kembali Ke Menu Sebelumnya")
 	return listbuku, nil
 }

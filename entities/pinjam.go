@@ -10,7 +10,7 @@ type Pinjam struct {
 	gorm.Model
 	BukuID              uint
 	UserID              uint
-	nameBuku            string
+	nameBuku            string `gorm:"not null"`
 	TanggalPinjam       time.Time
 	TanggalPengembalian time.Time
 }
