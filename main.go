@@ -10,7 +10,7 @@ import (
 
 func TampilanMenuUtama() {
 	// MENU UTAMA
-	Mymenu := []string{"1. Login", "2. Register", "3. List Buku", "99. Keluar"}
+	Mymenu := []string{"1. Login", "2. Register", "3. List Buku", "4. Keluar"}
 	fmt.Println("===== Menu Utama =====")
 	for _, v := range Mymenu {
 		fmt.Println(v)
@@ -27,7 +27,7 @@ func TampilanMenuUtama() {
 		Register()
 	case 3:
 		ListBuku(entities.Users{})
-	case 99:
+	case 4:
 		fmt.Println("===== Terimakasih Sudah Berkunjung =====")
 		break
 	default:
@@ -103,7 +103,7 @@ func ListBuku(user entities.Users) {
 			MenuApps(user)
 		} else if angka == 99 && user.ID == 0 {
 			TampilanMenuUtama()
-		} else {
+		} else if angka > len(list) || angka == 0 {
 			ListBuku(user)
 		}
 	}
