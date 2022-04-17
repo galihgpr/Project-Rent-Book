@@ -249,7 +249,7 @@ func UpdateBuku(Buku string, UserID uint, user entities.Users) {
 			fmt.Println()
 			fmt.Println("UPDATE NAMA BUKU BERHASIL")
 			fmt.Println()
-			DetailBuku(Buku, UserID, user)
+			UpdateBuku(Buku, UserID, user)
 		}
 	}
 }
