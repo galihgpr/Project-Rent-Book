@@ -37,21 +37,39 @@ func (b *BukuDB) TambahBuku(NewBuku entities.Buku, user entities.Users) (entitie
 	return NewBuku, nil
 }
 
-func (b *BukuDB) ListBuku(user entities.Users) (entities.Buku, error) {
-	listbuku := entities.Buku{}
+//METHOD LIST BUKU
+func (b *BukuDB) ListBuku() ([]entities.Buku, error) {
 	buku := []entities.Buku{}
 
-	if err := b.Db.Find(&listbuku).Error; err != nil {
+	if err := b.Db.Order("name_buku").Find(&buku).Error; err != nil {
 		ErrCek := errors.New("AKSES KE DATABASE GAGAL")
-		return entities.Buku{}, ErrCek
+		return []entities.Buku{}, ErrCek
 	}
-	if err := b.Db.Select("name_buku").Order("name_buku").Find(&buku).Error; err != nil {
+
+	return buku, nil
+}
+
+//METHOD GET BUKU
+func (b *BukuDB) DetailBuku(buku string, user uint) (entities.DetailBuku, error) {
+	// detail := entities.DetailBuku{}
+	result := entities.DetailBuku{}
+	fmt.Println(buku, user)
+	// hasil := b.Db.Exec("SELECT * FROM users u LEFT JOIN bukus b on u.id=b.user_id WHERE u.id=? AND b.name_buku =?;", user, buku).Scan(&detail)
+	hasil := b.Db.Table("users u").Joins("LEFT JOIN bukus b on u.id=b.user_id").Where("u.id=? AND b.name_buku =?", user, buku).Scan(&result)
+	if hasil.Error != nil {
+		fmt.Println()
 		ErrCek := errors.New("AKSES KE DATABASE GAGAL")
-		return entities.Buku{}, ErrCek
+		return entities.DetailBuku{}, ErrCek
 	}
-	for i, v := range buku {
-		fmt.Println(i+1, " ", strings.ToUpper(v.NameBuku))
+	return result, nil
+}
+
+//METHOD UPDATE BUKU
+
+func (b *BukuDB) UpdateBuku(namalama string, namabaru string) (string, error) {
+	update := b.Db.Table("bukus").Where("name_buku =?", namalama).Update("name_buku", namabaru)
+	if update.Error != nil {
+		return namalama, update.Error
 	}
-	fmt.Println("99 Kembali Ke Menu Sebelumnya")
-	return listbuku, nil
+	return namabaru, nil
 }
