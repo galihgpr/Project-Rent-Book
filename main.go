@@ -416,16 +416,19 @@ func ListPinjamBuku(user entities.Users) {
 			ListPinjamBuku(user)
 		}
 	}
-
 }
 func PinjamBuku(buku entities.DetailBuku, Buku entities.Buku, user entities.Users) {
 	conn := config.ConnectDB()
 	str, err := datastore.Pinjam(conn, buku, user.ID)
 	if err != nil {
+		fmt.Println()
 		fmt.Println(str)
+		fmt.Println()
 		DetailBuku(Buku, user)
 	} else {
+		fmt.Println()
 		fmt.Println(str)
+		fmt.Println()
 		DetailBuku(Buku, user)
 	}
 
@@ -437,15 +440,20 @@ func kembalikan(buku entities.Pinjam, user entities.Users) {
 	conn := config.ConnectDB()
 	var nomor int
 	fmt.Println("1. Kembalikan buku\n99.Kembali")
+	fmt.Print("Masukkan Pilihan : ")
 	fmt.Scanf("%d", &nomor)
 	switch nomor {
 	case 1:
 		str, err := datastore.Kembalikan(conn, buku.ID, buku.BukuID)
 		if err != nil {
+			fmt.Println()
 			fmt.Println(str)
+			fmt.Println()
 			kembalikan(buku, user)
 		} else {
+			fmt.Println()
 			fmt.Println(str)
+			fmt.Println()
 			ListPinjamBuku(user)
 		}
 	case 99:

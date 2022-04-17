@@ -12,8 +12,8 @@ import (
 func Pinjam(db *gorm.DB, buku entities.DetailBuku, id uint) (string, error) {
 	book := entities.Buku{}
 	if buku.Status == true {
-		err := errors.New("Masih di Pinjam Oleh Orang Lain")
-		return "Buku Gagal di Pinjam", err
+		err := errors.New("MASIH DIPINJAM OLEH ORANG LAIN")
+		return "BUKU GAGAL DIPINJAM", err
 	}
 	db.Table("bukus").Where("name_buku=?", buku.NameBuku).Updates(entities.Buku{Status: true, Jumlah: buku.Jumlah + 1})
 	db.Where("name_buku=?", buku.NameBuku).Find(&book)
@@ -29,10 +29,10 @@ func Pinjam(db *gorm.DB, buku entities.DetailBuku, id uint) (string, error) {
 
 	res := db.Create(&pjm)
 	if res.Error != nil {
-		return "Buku Gagal di Pinjam", res.Error
+		return "BUKU GAGAL DI PINJAM", res.Error
 	}
 
-	return "Berhasil di Tambahkan ke List Pinjam Anda", nil
+	return "BUKU BERHASIL DI PINJAM", nil
 }
 
 func GetAllPinjam(db *gorm.DB, id uint) ([]entities.Pinjam, error) {
@@ -51,9 +51,9 @@ func GetAllPinjam(db *gorm.DB, id uint) ([]entities.Pinjam, error) {
 
 func Kembalikan(db *gorm.DB, id uint, idbuku uint) (string, error) {
 	if err := db.Table("pinjams").Where("buku_id=?", idbuku).Update("aktif", true).Error; err != nil {
-		return "Pengembalian Buku Gagal", err
+		return "PENGEMBALIAN BUKU GAGAL", err
 	}
 	db.Model(&entities.Buku{}).Where("id", idbuku).Update("status", false)
 
-	return "Berhasil Mengembalikan Buku", nil
+	return "BERHASIL MENGEMBALIKAN BUKU", nil
 }
