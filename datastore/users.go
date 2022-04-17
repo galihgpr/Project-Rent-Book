@@ -48,6 +48,7 @@ func (u *UserDB) Register(newUser entities.Users) (entities.Users, error) {
 }
 
 //EDIT PROFIL
+
 func UpdateUser(db *gorm.DB, updatedUser entities.Users) (entities.Users, error, string) {
 	qry := db.Save(&updatedUser)
 

@@ -281,26 +281,86 @@ func MyProfil(user entities.Users) {
 	}
 
 }
-func UpdateProfil(user entities.Users) {
-	fmt.Println("===== Buku yang Dipinjam =====")
-	fmt.Println("")
-	conn := config.ConnectDB()
-	newUser := user
-	fmt.Print("Masukkan Nama :")
-	fmt.Scanln(&newUser.Nama)
-	fmt.Print("Masukkan password :")
-	fmt.Scanln(&newUser.Password)
-	fmt.Print("Masukkan No Hp :")
-	fmt.Scanln(&newUser.HP)
 
-	usr, err, str := datastore.UpdateUser(conn, newUser)
+// func UpdateProfil(user entities.Users) {
+// 	fmt.Println("===== Buku yang Dipinjam =====")
+// 	fmt.Println("")
+// 	conn := config.ConnectDB()
+// 	newUser := user
+// 	fmt.Print("Masukkan Nama :")
+// 	fmt.Scanln(&newUser.Nama)
+// 	fmt.Print("Masukkan password :")
+// 	fmt.Scanln(&newUser.Password)
+// 	fmt.Print("Masukkan No Hp :")
+// 	fmt.Scanln(&newUser.HP)
+
+// 	usr, err, str := datastore.UpdateUser(conn, newUser)
+// 	if err != nil {
+// 		fmt.Println(str)
+// 		UpdateProfil(user)
+// 	} else {
+// 		fmt.Println(str)
+// 		MyProfil(usr)
+// 	}
+// }
+func UpdateProfil(user entities.Users) {
+	fmt.Println("===== Update Profil =====")
+	fmt.Println("")
+
+	fmt.Print("1. Ganti Nama\n2. Ganti Password\n3. Ganti No Telp\n99. Kembali")
+	fmt.Println("")
+	var nomor int
+	fmt.Scanf("%d", &nomor)
+	switch nomor {
+	case 1:
+		UpdateNama(user)
+	case 2:
+		UpdatePassword(user)
+	case 3:
+		UpdateNoTelp(user)
+	case 99:
+		MyProfil(user)
+	}
+}
+func UpdateNama(user entities.Users) {
+	conn := config.ConnectDB()
+	newNama := user
+	fmt.Print("Masukkan Nama :")
+	fmt.Scanln(&newNama.Nama)
+	usr, err, str := datastore.UpdateUser(conn, newNama)
 	if err != nil {
 		fmt.Println(str)
-		UpdateProfil(user)
 	} else {
 		fmt.Println(str)
-		MyProfil(usr)
+		UpdateProfil(usr)
 	}
+}
+func UpdatePassword(user entities.Users) {
+	conn := config.ConnectDB()
+	newPassword := user
+	fmt.Print("Masukkan Nama :")
+	fmt.Scanln(&newPassword.Password)
+	usr, err, str := datastore.UpdateUser(conn, newPassword)
+	if err != nil {
+		fmt.Println(str)
+	} else {
+		fmt.Println(str)
+		UpdateProfil(usr)
+	}
+}
+func UpdateNoTelp(user entities.Users) {
+	conn := config.ConnectDB()
+	newHp := user
+	fmt.Print("Masukkan Nama :")
+	fmt.Scanln(&newHp.HP)
+	usr, err, str := datastore.UpdateUser(conn, newHp)
+	if err != nil {
+		fmt.Println(str)
+	} else {
+		fmt.Println(str)
+		UpdateProfil(usr)
+	}
+
 }
 
 func NonAktif(user entities.Users) {
