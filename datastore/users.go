@@ -14,16 +14,14 @@ type UserDB struct {
 //LOGIN AKUN
 func (u *UserDB) LoginAkun(newLogin entities.Users) (entities.Users, error) {
 	CekLogin := entities.Users{}
-
 	if err := u.Db.Where("email = ? AND password = ?", newLogin.Email, newLogin.Password).Find(&CekLogin).Error; err != nil {
 		ErrCek := errors.New("Error Akses Ke Database")
 		return entities.Users{}, ErrCek
 	}
-	if CekLogin.Email == "" {
+	if CekLogin.Email == "" || CekLogin.StatusAkun == true {
 		err := errors.New("Email Atau Password Salah")
 		return entities.Users{}, err
 	}
-
 	return CekLogin, nil
 }
 

@@ -41,7 +41,7 @@ func (b *BukuDB) TambahBuku(NewBuku entities.Buku, user entities.Users) (entitie
 func (b *BukuDB) ListBuku() ([]entities.Buku, error) {
 	buku := []entities.Buku{}
 
-	if err := b.Db.Order("name_buku").Find(&buku).Error; err != nil {
+	if err := b.Db.Where("aktif=?", false).Order("name_buku").Find(&buku).Error; err != nil {
 		ErrCek := errors.New("AKSES KE DATABASE GAGAL")
 		return []entities.Buku{}, ErrCek
 	}
@@ -50,9 +50,9 @@ func (b *BukuDB) ListBuku() ([]entities.Buku, error) {
 }
 
 //METHOD GET BUKU
-func (b *BukuDB) DetailBuku(buku string, user uint) (entities.DetailBuku, error) {
+func (b *BukuDB) DetailBuku(buku entities.Buku) (entities.DetailBuku, error) {
 	result := entities.DetailBuku{}
-	hasil := b.Db.Table("users u").Joins("LEFT JOIN bukus b on u.id=b.user_id").Where("u.id=? AND b.name_buku =?", user, buku).Scan(&result)
+	hasil := b.Db.Table("users u").Joins("LEFT JOIN bukus b on u.id=b.user_id").Where("u.id=? AND b.name_buku =? and b.aktif=false", buku.UserID, buku.NameBuku).Scan(&result)
 	if hasil.Error != nil {
 		fmt.Println()
 		ErrCek := errors.New("AKSES KE DATABASE GAGAL")
@@ -69,4 +69,16 @@ func (b *BukuDB) UpdateBuku(namalama string, namabaru string) (string, error) {
 		return namalama, update.Error
 	}
 	return namabaru, nil
+}
+
+//METHOD DELETE BUKU
+
+func (b *BukuDB) Delete(Buku entities.Buku, user entities.Users) (string, error) {
+	if err := b.Db.Table("pinjams").Where("name_buku=?", Buku.NameBuku).Update("aktif", true).Error; err != nil {
+		return "Delete Buku Gagal", err
+	}
+	if err := b.Db.Table("bukus").Where("name_buku=?", Buku.NameBuku).Update("aktif", true).Error; err != nil {
+		return "Delete Buku Gagal", err
+	}
+	return "BERHASIL DELETE BUKU", nil
 }

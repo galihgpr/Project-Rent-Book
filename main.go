@@ -100,7 +100,7 @@ func ListBuku(user entities.Users) {
 	fmt.Scanf("%d", &angka)
 	for i, v := range list {
 		if i+1 == angka {
-			DetailBuku(v.NameBuku, v.UserID, user)
+			DetailBuku(v, user)
 		} else if angka == 99 && user.ID != 0 {
 			MenuApps(user)
 		} else if angka == 99 && user.ID == 0 {
@@ -112,19 +112,18 @@ func ListBuku(user entities.Users) {
 }
 
 //Detail Buku
-func DetailBuku(Buku string, UserID uint, user entities.Users) {
+func DetailBuku(Buku entities.Buku, user entities.Users) {
 	fmt.Println("===== Detail Buku =====")
-	fmt.Println(user.ID == 0)
 	conn := config.ConnectDB()
 	buku := datastore.BukuDB{Db: conn}
-	detail, err := buku.DetailBuku(Buku, UserID)
+	detail, err := buku.DetailBuku(Buku)
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println("Nama Buku 		: ", strings.ToUpper(detail.NameBuku))
 	fmt.Println("Nama Penulis 		: ", strings.ToUpper(detail.Nama))
 	fmt.Println("Di Pinjam Sebanyak 	: ", detail.Jumlah, " Kali")
-	if detail.Status == true {
+	if detail.Status == false {
 		fmt.Println("Status 			:  Bisa Dipinjam")
 	} else {
 		fmt.Println("Status 			:  Sedang Dipinjam")
@@ -147,35 +146,31 @@ func DetailBuku(Buku string, UserID uint, user entities.Users) {
 	if user.ID == detail.UserID {
 		switch pilihan {
 		case 1:
-			fmt.Println("Buku diedit")
-			UpdateBuku(Buku, UserID, user)
+			UpdateBuku(Buku, user)
 		case 2:
-			// DeleteBuku
+			DeleteBuku(Buku, user)
 		case 3:
-			fmt.Println("Buku di Pinjam")
-			PinjamBuku(detail, user.ID)
-			DetailBuku(Buku, UserID, user)
+			PinjamBuku(detail, Buku, user)
 		case 99:
 			ListBuku(user)
 		default:
-			DetailBuku(Buku, UserID, user)
+			DetailBuku(Buku, user)
 		}
 	} else if user.ID == 0 {
 		switch pilihan {
 		case 99:
 			ListBuku(user)
 		default:
-			DetailBuku(Buku, UserID, user)
+			DetailBuku(Buku, user)
 		}
 	} else {
 		switch pilihan {
 		case 1:
-			fmt.Println("Buku di Pinjam")
-			DetailBuku(Buku, UserID, user)
+			PinjamBuku(detail, Buku, user)
 		case 99:
 			ListBuku(user)
 		default:
-			DetailBuku(Buku, UserID, user)
+			DetailBuku(Buku, user)
 		}
 	}
 }
@@ -229,45 +224,59 @@ func BuatBuku(user entities.Users) {
 	}
 }
 
-func UpdateBuku(Buku string, UserID uint, user entities.Users) {
+func UpdateBuku(Buku entities.Buku, user entities.Users) {
 	fmt.Println("===== Update Buku =====")
 	conn := config.ConnectDB()
 	update := datastore.BukuDB{Db: conn}
-	fmt.Println("Nama Buku Sebelumnya : ", Buku)
+	fmt.Println("Nama Buku Sebelumnya : ", Buku.NameBuku)
 	fmt.Println("Ketik (batal) Untuk Membatalkan Perubahan")
 	fmt.Print("Nama Buku Yang Baru : ")
 	var namabaru string
 	fmt.Scanf("%s", &namabaru)
 	if namabaru == "batal" {
-		DetailBuku(Buku, UserID, user)
+		DetailBuku(Buku, user)
 	} else {
-		_, err := update.UpdateBuku(Buku, namabaru)
+		_, err := update.UpdateBuku(Buku.NameBuku, namabaru)
 		if err != nil {
 			fmt.Println()
 			fmt.Println("UPDATE NAMA BUKU GAGAL")
 			fmt.Println()
-			UpdateBuku(Buku, UserID, user)
+			ListBuku(user)
 		} else {
 			fmt.Println()
 			fmt.Println("UPDATE NAMA BUKU BERHASIL")
 			fmt.Println()
-			UpdateBuku(Buku, UserID, user)
+			ListBuku(user)
 		}
+	}
+}
+
+//Delete Buku
+
+func DeleteBuku(Buku entities.Buku, user entities.Users) {
+	conn := config.ConnectDB()
+	Delete := datastore.BukuDB{Db: conn}
+	Del, err := Delete.Delete(Buku, user)
+	if err != nil {
+		fmt.Println(Del)
+		DetailBuku(Buku, user)
+	} else {
+		fmt.Println(Del)
+		fmt.Println()
+		ListBuku(user)
 	}
 }
 
 func MyProfil(user entities.Users) {
 	fmt.Println("===== My Profil =====")
-	fmt.Println("")
+	fmt.Println()
 	fmt.Println("Nama\t:", user.Nama)
 	fmt.Println("Email\t:", user.Email)
 	fmt.Println("No Hp\t:", user.HP)
-	fmt.Println("")
-	fmt.Println("")
-	fmt.Println("")
-	fmt.Println("")
+	fmt.Println()
 	var nomor int
-	fmt.Println("1. Edit Profil\n2. Non-aktifkan akun\n99. kembali")
+	fmt.Println("1. Edit Profil\n2. Non-aktifkan Akun\n99. Kembali")
+	fmt.Print("Masukkan Pilihan : ")
 	fmt.Scanf("%d", &nomor)
 	switch nomor {
 	case 1:
@@ -282,34 +291,13 @@ func MyProfil(user entities.Users) {
 
 }
 
-// func UpdateProfil(user entities.Users) {
-// 	fmt.Println("===== Buku yang Dipinjam =====")
-// 	fmt.Println("")
-// 	conn := config.ConnectDB()
-// 	newUser := user
-// 	fmt.Print("Masukkan Nama :")
-// 	fmt.Scanln(&newUser.Nama)
-// 	fmt.Print("Masukkan password :")
-// 	fmt.Scanln(&newUser.Password)
-// 	fmt.Print("Masukkan No Hp :")
-// 	fmt.Scanln(&newUser.HP)
-
-// 	usr, err, str := datastore.UpdateUser(conn, newUser)
-// 	if err != nil {
-// 		fmt.Println(str)
-// 		UpdateProfil(user)
-// 	} else {
-// 		fmt.Println(str)
-// 		MyProfil(usr)
-// 	}
-// }
 func UpdateProfil(user entities.Users) {
 	fmt.Println("===== Update Profil =====")
 	fmt.Println("")
-
 	fmt.Print("1. Ganti Nama\n2. Ganti Password\n3. Ganti No Telp\n99. Kembali")
 	fmt.Println("")
 	var nomor int
+	fmt.Print("Masukkan Pilihan : ")
 	fmt.Scanf("%d", &nomor)
 	switch nomor {
 	case 1:
@@ -323,61 +311,83 @@ func UpdateProfil(user entities.Users) {
 	}
 }
 func UpdateNama(user entities.Users) {
+	fmt.Println("===== Update Nama =====")
+	fmt.Println()
 	conn := config.ConnectDB()
 	newNama := user
-	fmt.Print("Masukkan Nama :")
-	fmt.Scanln(&newNama.Nama)
+	fmt.Print("Masukkan Nama Baru : ")
+	fmt.Scan(&newNama.Nama)
 	usr, err, str := datastore.UpdateUser(conn, newNama)
 	if err != nil {
+		fmt.Println()
 		fmt.Println(str)
+		fmt.Println()
+		UpdateProfil(usr)
 	} else {
+		fmt.Println()
 		fmt.Println(str)
+		fmt.Println()
 		UpdateProfil(usr)
 	}
 }
 func UpdatePassword(user entities.Users) {
+	fmt.Println("===== Update Password =====")
+	fmt.Println()
 	conn := config.ConnectDB()
 	newPassword := user
-	fmt.Print("Masukkan Nama :")
-	fmt.Scanln(&newPassword.Password)
+	fmt.Print("Masukkan Password Baru : ")
+	fmt.Scan(&newPassword.Password)
 	usr, err, str := datastore.UpdateUser(conn, newPassword)
 	if err != nil {
+		fmt.Println()
 		fmt.Println(str)
+		fmt.Println()
+		UpdateProfil(usr)
 	} else {
+		fmt.Println()
 		fmt.Println(str)
+		fmt.Println()
 		UpdateProfil(usr)
 	}
 }
 func UpdateNoTelp(user entities.Users) {
+	fmt.Println("===== Update Nomor Telepon =====")
+	fmt.Println()
 	conn := config.ConnectDB()
 	newHp := user
-	fmt.Print("Masukkan Nama :")
-	fmt.Scanln(&newHp.HP)
+	fmt.Print("Masukkan No HP Baru : ")
+	fmt.Scan(&newHp.HP)
 	usr, err, str := datastore.UpdateUser(conn, newHp)
 	if err != nil {
+		fmt.Println()
 		fmt.Println(str)
+		fmt.Println()
+		UpdateProfil(usr)
 	} else {
+		fmt.Println()
 		fmt.Println(str)
+		fmt.Println()
 		UpdateProfil(usr)
 	}
-
 }
 
 func NonAktif(user entities.Users) {
 	conn := config.ConnectDB()
 	newUser := user
-	newUser.Status = false
+	newUser.StatusAkun = true
 	usr, err, _ := datastore.UpdateUser(conn, newUser)
 	if err != nil {
 		fmt.Println("Non Aktif akun gagal")
 		MyProfil(usr)
 	} else {
 		fmt.Println("Non Aktif akun berhasil")
-		MenuApps(usr)
+		TampilanMenuUtama()
 	}
-
 }
 func ListPinjamBuku(user entities.Users) {
+	fmt.Println()
+	fmt.Println("===== LIST BUKU YANG DIPINJAM =====")
+	fmt.Println()
 	conn := config.ConnectDB()
 	allpjm, err := datastore.GetAllPinjam(conn, user.ID)
 	if err != nil {
@@ -387,13 +397,11 @@ func ListPinjamBuku(user entities.Users) {
 			fmt.Println(i+1, " ", strings.ToUpper(v.NameBuku))
 			fmt.Println("    TanggalPengembalian : ", "(", v.TanggalPengembalian, ")")
 		}
-		fmt.Println("")
-		fmt.Println("")
-		fmt.Println("")
+		fmt.Println()
 		fmt.Println("00. Kembali")
 		var buku entities.Pinjam
 		var nomor int
-		fmt.Println("pilih buku")
+		fmt.Print("Masukkan Pilihan : ")
 		fmt.Scanf("%d", &nomor)
 		for i, v := range allpjm {
 			if i == nomor-1 {
@@ -410,17 +418,22 @@ func ListPinjamBuku(user entities.Users) {
 	}
 
 }
-func PinjamBuku(buku entities.DetailBuku, id uint) {
+func PinjamBuku(buku entities.DetailBuku, Buku entities.Buku, user entities.Users) {
 	conn := config.ConnectDB()
-	str, err := datastore.Pinjam(conn, buku, id)
+	str, err := datastore.Pinjam(conn, buku, user.ID)
 	if err != nil {
 		fmt.Println(str)
+		DetailBuku(Buku, user)
 	} else {
 		fmt.Println(str)
+		DetailBuku(Buku, user)
 	}
 
 }
 func kembalikan(buku entities.Pinjam, user entities.Users) {
+	fmt.Println()
+	fmt.Println("===== Kembalikan Buku =====")
+	fmt.Println()
 	conn := config.ConnectDB()
 	var nomor int
 	fmt.Println("1. Kembalikan buku\n99.Kembali")
