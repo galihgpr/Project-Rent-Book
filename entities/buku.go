@@ -4,9 +4,6 @@ import "gorm.io/gorm"
 
 type Buku struct {
 	gorm.Model
-<<<<<<< HEAD
-
-=======
 	NameBuku string
 	Author   string `gorm:"not null"`
 	Jumlah   int    `gorm:"default:0"`
@@ -23,4 +20,3 @@ type DetailBuku struct {
 	Jumlah   int
 	Author   string
 }
->>>>>>> List-Buku

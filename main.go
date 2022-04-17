@@ -10,10 +10,8 @@ import (
 
 func TampilanMenuUtama() {
 	// MENU UTAMA
-<<<<<<< HEAD
-=======
+
 	Mymenu := []string{"1. Login", "2. Register", "3. List Buku", "4. Keluar"}
->>>>>>> List-Buku
 	fmt.Println("===== Menu Utama =====")
 	for _, v := range Mymenu {
 		fmt.Println(v)
@@ -29,13 +27,9 @@ func TampilanMenuUtama() {
 	case 2:
 		Register()
 	case 3:
-<<<<<<< HEAD
-		// ListBuku()
-	case 99:
-=======
+
 		ListBuku(entities.Users{})
 	case 4:
->>>>>>> List-Buku
 		fmt.Println("===== Terimakasih Sudah Berkunjung =====")
 		break
 	default:
@@ -84,9 +78,6 @@ func Register() {
 	}
 	fmt.Println()
 	MenuApps(daftar)
-<<<<<<< HEAD
-
-=======
 }
 
 //Tampilkan List Buku
@@ -186,7 +177,6 @@ func DetailBuku(Buku string, UserID uint, user entities.Users) {
 			DetailBuku(Buku, UserID, user)
 		}
 	}
->>>>>>> List-Buku
 }
 
 //Menu Apps
@@ -208,15 +198,10 @@ func MenuApps(user entities.Users) {
 		fmt.Println("===== My Profil =====")
 		// Login()
 	case 2:
-<<<<<<< HEAD
-		// BuatBuku(user)
-	case 3:
-		// ListBuku(user)
-=======
+
 		BuatBuku(user)
 	case 3:
 		ListBuku(user)
->>>>>>> List-Buku
 	case 4:
 		fmt.Println("===== Buku yang Dipinjam =====")
 	case 5:
@@ -226,11 +211,6 @@ func MenuApps(user entities.Users) {
 	}
 }
 
-<<<<<<< HEAD
-func main() {
-	// DBcon := config.ConnectDB()
-	// DBcon.AutoMigrate(entities.Buku{}, entities.Pinjam{})
-=======
 //BUAT BUKU
 func BuatBuku(user entities.Users) {
 	fmt.Println("===== Membuat Buku =====")
@@ -280,6 +260,5 @@ func UpdateBuku(Buku string, UserID uint, user entities.Users) {
 func main() {
 	// DBcon := config.ConnectDB()
 	// DBcon.AutoMigrate(entities.Users{}, entities.Buku{}, entities.Pinjam{})
->>>>>>> List-Buku
 	TampilanMenuUtama()
 }

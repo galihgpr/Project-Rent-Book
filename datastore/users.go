@@ -30,10 +30,7 @@ func (u *UserDB) LoginAkun(newLogin entities.Users) (entities.Users, error) {
 // REGISTER AKUN
 func (u *UserDB) Register(newUser entities.Users) (entities.Users, error) {
 	user := entities.Users{}
-<<<<<<< HEAD
 
-=======
->>>>>>> List-Buku
 	if err := u.Db.Where("email = ?", newUser.Email).Find(&user).Error; err != nil {
 		ErrCek := errors.New("Akses Database User Gagal")
 		return entities.Users{}, ErrCek
