@@ -51,10 +51,7 @@ func (b *BukuDB) ListBuku() ([]entities.Buku, error) {
 
 //METHOD GET BUKU
 func (b *BukuDB) DetailBuku(buku string, user uint) (entities.DetailBuku, error) {
-	// detail := entities.DetailBuku{}
 	result := entities.DetailBuku{}
-	fmt.Println(buku, user)
-	// hasil := b.Db.Exec("SELECT * FROM users u LEFT JOIN bukus b on u.id=b.user_id WHERE u.id=? AND b.name_buku =?;", user, buku).Scan(&detail)
 	hasil := b.Db.Table("users u").Joins("LEFT JOIN bukus b on u.id=b.user_id").Where("u.id=? AND b.name_buku =?", user, buku).Scan(&result)
 	if hasil.Error != nil {
 		fmt.Println()
