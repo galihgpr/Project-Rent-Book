@@ -25,12 +25,12 @@ func (b *BukuDB) TambahBuku(NewBuku entities.Buku, user entities.Users) (entitie
 	}
 	if buku.NameBuku != "" {
 		fmt.Println()
-		err := errors.New("BUKU GAGAL DI BUAT, BUKU" + buku.NameBuku + " SUDAH ADA")
+		err := errors.New("BUKU GAGAL DI BUAT, BUKU '" + strings.ToUpper(buku.NameBuku) + "' SUDAH ADA")
 		return entities.Buku{}, err
 	} else {
 		if err := b.Db.Create(&NewBuku).Error; err != nil {
 			fmt.Println()
-			ErrCek := errors.New("Pendaftaran Gagal")
+			ErrCek := errors.New("BUKU GAGAL DI BUAT")
 			return entities.Buku{}, ErrCek
 		}
 	}
@@ -75,10 +75,10 @@ func (b *BukuDB) UpdateBuku(namalama string, namabaru string) (string, error) {
 
 func (b *BukuDB) Delete(Buku entities.Buku, user entities.Users) (string, error) {
 	if err := b.Db.Table("pinjams").Where("name_buku=?", Buku.NameBuku).Update("aktif", true).Error; err != nil {
-		return "Delete Buku Gagal", err
+		return "DELETE BUKU GAGAL", err
 	}
 	if err := b.Db.Table("bukus").Where("name_buku=?", Buku.NameBuku).Update("aktif", true).Error; err != nil {
-		return "Delete Buku Gagal", err
+		return "DELETE BUKU GAGAL", err
 	}
 	return "BERHASIL DELETE BUKU", nil
 }

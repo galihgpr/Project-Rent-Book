@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"intro-golang/config"
 	"intro-golang/datastore"
 	"intro-golang/entities"
+	"os"
 	"strings"
 )
 
@@ -13,9 +15,11 @@ func TampilanMenuUtama() {
 
 	Mymenu := []string{"1. Login", "2. Register", "3. List Buku", "4. Keluar"}
 	fmt.Println("===== Menu Utama =====")
+	fmt.Println()
 	for _, v := range Mymenu {
 		fmt.Println(v)
 	}
+	fmt.Println()
 	var nomor int
 	fmt.Print("Pilih Menu : ")
 	fmt.Scanf("%d", &nomor)
@@ -27,7 +31,6 @@ func TampilanMenuUtama() {
 	case 2:
 		Register()
 	case 3:
-
 		ListBuku(entities.Users{})
 	case 4:
 		fmt.Println("===== Terimakasih Sudah Berkunjung =====")
@@ -49,7 +52,9 @@ func Login() {
 	fmt.Scanf("%s", &password)
 	masuk, err := user.LoginAkun(entities.Users{Email: email, Password: password})
 	if err != nil {
+		fmt.Println()
 		fmt.Println(err)
+		fmt.Println()
 		TampilanMenuUtama()
 	} else {
 		fmt.Println()
@@ -59,12 +64,16 @@ func Login() {
 
 //Menu Register
 func Register() {
+	fmt.Println()
 	fmt.Println("===== Registrasi Akun =====")
+	fmt.Println()
 	conn := config.ConnectDB()
 	user := datastore.UserDB{Db: conn}
 	var nama, email, password, hp string
+	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Print("Masukkan Nama : ")
-	fmt.Scanf("%s", &nama)
+	scanner.Scan() // use `for scanner.Scan()` to keep reading
+	nama = scanner.Text()
 	fmt.Print("Masukkan Email : ")
 	fmt.Scanf("%s", &email)
 	fmt.Print("Masukkan Password : ")
@@ -73,7 +82,9 @@ func Register() {
 	fmt.Scanf("%s", &hp)
 	daftar, err := user.Register(entities.Users{Nama: nama, Email: email, Password: password, HP: hp})
 	if err != nil {
+		fmt.Println()
 		fmt.Println(err)
+		fmt.Println()
 		TampilanMenuUtama()
 	}
 	fmt.Println()
@@ -82,19 +93,25 @@ func Register() {
 
 //Tampilkan List Buku
 func ListBuku(user entities.Users) {
+	fmt.Println()
 	fmt.Println("===== List Buku =====")
+	fmt.Println()
 	conn := config.ConnectDB()
 	buku := datastore.BukuDB{Db: conn}
 	list, err := buku.ListBuku()
 	if err != nil {
+		fmt.Println()
 		fmt.Println(err)
+		fmt.Println()
 		MenuApps(user)
 	}
 	for i, v := range list {
 		fmt.Println(i+1, " ", strings.ToUpper(v.NameBuku))
 		fmt.Println("    Author : ", "(", v.Author, ")", " Dipinjam : ", "(", v.Jumlah, ")", " kali")
 	}
-	fmt.Println("99 Kembali Ke Menu Sebelumnya")
+	fmt.Println()
+	fmt.Println("99  Kembali Ke Menu Sebelumnya")
+	fmt.Println()
 	fmt.Print("Masukkan Pilihan: ")
 	var angka int
 	fmt.Scanf("%d", &angka)
@@ -113,12 +130,16 @@ func ListBuku(user entities.Users) {
 
 //Detail Buku
 func DetailBuku(Buku entities.Buku, user entities.Users) {
+	fmt.Println()
 	fmt.Println("===== Detail Buku =====")
+	fmt.Println()
 	conn := config.ConnectDB()
 	buku := datastore.BukuDB{Db: conn}
 	detail, err := buku.DetailBuku(Buku)
 	if err != nil {
+		fmt.Println()
 		fmt.Println(err)
+		fmt.Println()
 	}
 	fmt.Println("Nama Buku 		: ", strings.ToUpper(detail.NameBuku))
 	fmt.Println("Nama Penulis 		: ", strings.ToUpper(detail.Nama))
@@ -128,6 +149,7 @@ func DetailBuku(Buku entities.Buku, user entities.Users) {
 	} else {
 		fmt.Println("Status 			:  Sedang Dipinjam")
 	}
+	fmt.Println()
 	fmt.Println("Pilihan : ")
 	if user.ID == detail.UserID {
 		fmt.Println("1. Edit Buku")
@@ -137,10 +159,11 @@ func DetailBuku(Buku entities.Buku, user entities.Users) {
 	} else if user.ID == 0 {
 		fmt.Println("99. Menu Sebelumnya")
 	} else {
-		fmt.Println("1. Pinjam Buku")
+		fmt.Println("1.  Pinjam Buku")
 		fmt.Println("99. Menu Sebelumnya")
 	}
 	pilihan := 0
+	fmt.Println()
 	fmt.Print("Pilih Menu : ")
 	fmt.Scanf("%d", &pilihan)
 	if user.ID == detail.UserID {
@@ -181,11 +204,14 @@ func MenuApps(user entities.Users) {
 	Mymenu := []string{"1. Lihat Profil", "2. Buat Buku", "3. List Buku", "4. Buku yang dipinjam", "5. Logout"}
 	fmt.Println()
 	fmt.Println("SELAMAT DATANG", strings.ToUpper(user.Nama))
+	fmt.Println()
 	fmt.Println("===== Menu Apps =====")
+	fmt.Println()
 	for _, v := range Mymenu {
 		fmt.Println(v)
 	}
 	var nomor int
+	fmt.Println()
 	fmt.Print("Pilih Menu : ")
 	fmt.Scanf("%d", &nomor)
 	fmt.Println()
@@ -207,32 +233,43 @@ func MenuApps(user entities.Users) {
 
 //BUAT BUKU
 func BuatBuku(user entities.Users) {
+	fmt.Println()
 	fmt.Println("===== Membuat Buku =====")
+	fmt.Println()
 	conn := config.ConnectDB()
 	buku := datastore.BukuDB{Db: conn}
 	var NamaBuku string
+	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Print("Masukkan Nama Buku: ")
-	fmt.Scanf("%s", &NamaBuku)
+	scanner.Scan() // use `for scanner.Scan()` to keep reading
+	NamaBuku = scanner.Text()
 	TambahBuku, err := buku.TambahBuku(entities.Buku{NameBuku: NamaBuku}, user)
 	if err != nil {
+		fmt.Println()
 		fmt.Println(err)
+		fmt.Println()
 		MenuApps(user)
 	} else {
 		fmt.Println()
 		fmt.Println("BUKU ", strings.ToUpper(TambahBuku.NameBuku), " BERHASIL DI BUAT")
+		fmt.Println()
 		MenuApps(user)
 	}
 }
 
 func UpdateBuku(Buku entities.Buku, user entities.Users) {
+	fmt.Println()
 	fmt.Println("===== Update Buku =====")
+	fmt.Println()
 	conn := config.ConnectDB()
 	update := datastore.BukuDB{Db: conn}
 	fmt.Println("Nama Buku Sebelumnya : ", Buku.NameBuku)
 	fmt.Println("Ketik (batal) Untuk Membatalkan Perubahan")
 	fmt.Print("Nama Buku Yang Baru : ")
 	var namabaru string
-	fmt.Scanf("%s", &namabaru)
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	namabaru = scanner.Text()
 	if namabaru == "batal" {
 		DetailBuku(Buku, user)
 	} else {
@@ -258,9 +295,12 @@ func DeleteBuku(Buku entities.Buku, user entities.Users) {
 	Delete := datastore.BukuDB{Db: conn}
 	Del, err := Delete.Delete(Buku, user)
 	if err != nil {
+		fmt.Println()
 		fmt.Println(Del)
+		fmt.Println()
 		DetailBuku(Buku, user)
 	} else {
+		fmt.Println()
 		fmt.Println(Del)
 		fmt.Println()
 		ListBuku(user)
@@ -268,6 +308,7 @@ func DeleteBuku(Buku entities.Buku, user entities.Users) {
 }
 
 func MyProfil(user entities.Users) {
+	fmt.Println()
 	fmt.Println("===== My Profil =====")
 	fmt.Println()
 	fmt.Println("Nama\t:", user.Nama)
@@ -276,6 +317,7 @@ func MyProfil(user entities.Users) {
 	fmt.Println()
 	var nomor int
 	fmt.Println("1. Edit Profil\n2. Non-aktifkan Akun\n99. Kembali")
+	fmt.Println()
 	fmt.Print("Masukkan Pilihan : ")
 	fmt.Scanf("%d", &nomor)
 	switch nomor {
@@ -288,14 +330,14 @@ func MyProfil(user entities.Users) {
 	default:
 		MyProfil(user)
 	}
-
 }
 
 func UpdateProfil(user entities.Users) {
+	fmt.Println()
 	fmt.Println("===== Update Profil =====")
-	fmt.Println("")
+	fmt.Println()
 	fmt.Print("1. Ganti Nama\n2. Ganti Password\n3. Ganti No Telp\n99. Kembali")
-	fmt.Println("")
+	fmt.Println()
 	var nomor int
 	fmt.Print("Masukkan Pilihan : ")
 	fmt.Scanf("%d", &nomor)
@@ -310,13 +352,18 @@ func UpdateProfil(user entities.Users) {
 		MyProfil(user)
 	}
 }
+
+// UpdateNama updates
 func UpdateNama(user entities.Users) {
+	fmt.Println()
 	fmt.Println("===== Update Nama =====")
 	fmt.Println()
 	conn := config.ConnectDB()
 	newNama := user
 	fmt.Print("Masukkan Nama Baru : ")
-	fmt.Scan(&newNama.Nama)
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan() // use `for scanner.Scan()` to keep reading
+	newNama.Nama = scanner.Text()
 	usr, err, str := datastore.UpdateUser(conn, newNama)
 	if err != nil {
 		fmt.Println()
@@ -330,7 +377,10 @@ func UpdateNama(user entities.Users) {
 		UpdateProfil(usr)
 	}
 }
+
+// Update Password
 func UpdatePassword(user entities.Users) {
+	fmt.Println()
 	fmt.Println("===== Update Password =====")
 	fmt.Println()
 	conn := config.ConnectDB()
@@ -350,7 +400,10 @@ func UpdatePassword(user entities.Users) {
 		UpdateProfil(usr)
 	}
 }
+
+// Updates No Hp
 func UpdateNoTelp(user entities.Users) {
+	fmt.Println()
 	fmt.Println("===== Update Nomor Telepon =====")
 	fmt.Println()
 	conn := config.ConnectDB()
@@ -377,10 +430,14 @@ func NonAktif(user entities.Users) {
 	newUser.StatusAkun = true
 	usr, err, _ := datastore.UpdateUser(conn, newUser)
 	if err != nil {
-		fmt.Println("Non Aktif akun gagal")
+		fmt.Println()
+		fmt.Println("NON AKTIF AKUN GAGAL")
+		fmt.Println()
 		MyProfil(usr)
 	} else {
-		fmt.Println("Non Aktif akun berhasil")
+		fmt.Println()
+		fmt.Println("NON AKTIF AKUN BERHASIL")
+		fmt.Println()
 		TampilanMenuUtama()
 	}
 }
@@ -391,16 +448,18 @@ func ListPinjamBuku(user entities.Users) {
 	conn := config.ConnectDB()
 	allpjm, err := datastore.GetAllPinjam(conn, user.ID)
 	if err != nil {
-		fmt.Println("eror saat memuat data pinjam buku")
+		fmt.Println("ERROR SAAT AKSES PINJAM BUKU")
 	} else {
 		for i, v := range allpjm {
 			fmt.Println(i+1, " ", strings.ToUpper(v.NameBuku))
-			fmt.Println("    TanggalPengembalian : ", "(", v.TanggalPengembalian, ")")
+			fmt.Println("    Tanggal Peminjaman   : ", "(", v.TanggalPinjam, ")")
+			fmt.Println("    Tanggal Pengembalian : ", "(", v.TanggalPengembalian, ")")
 		}
 		fmt.Println()
 		fmt.Println("00. Kembali")
 		var buku entities.Pinjam
 		var nomor int
+		fmt.Println()
 		fmt.Print("Masukkan Pilihan : ")
 		fmt.Scanf("%d", &nomor)
 		for i, v := range allpjm {
@@ -422,7 +481,7 @@ func PinjamBuku(buku entities.DetailBuku, Buku entities.Buku, user entities.User
 	str, err := datastore.Pinjam(conn, buku, user.ID)
 	if err != nil {
 		fmt.Println()
-		fmt.Println(str)
+		fmt.Println(str, err)
 		fmt.Println()
 		DetailBuku(Buku, user)
 	} else {
@@ -440,6 +499,7 @@ func kembalikan(buku entities.Pinjam, user entities.Users) {
 	conn := config.ConnectDB()
 	var nomor int
 	fmt.Println("1. Kembalikan buku\n99.Kembali")
+	fmt.Println()
 	fmt.Print("Masukkan Pilihan : ")
 	fmt.Scanf("%d", &nomor)
 	switch nomor {
