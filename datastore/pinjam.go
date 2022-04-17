@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func Pinjam(db *gorm.DB, buku entities.Buku, id uint) (string, error) {
+func Pinjam(db *gorm.DB, buku entities.DetailBuku, id uint) (string, error) {
 	pjm := entities.Pinjam{}
 	Buku := buku
 	pjm.UserID = id
@@ -25,13 +25,13 @@ func Pinjam(db *gorm.DB, buku entities.Buku, id uint) (string, error) {
 	Buku.Status = false
 	db.Save(&Buku)
 
-	return "berhasil di tambahkan ke list pinjam anda", nil
+	return "Berhasil di tambahkan ke list pinjam anda", nil
 }
 
-func GetAllPinjam(db *gorm.DB) ([]entities.Pinjam, error) {
+func GetAllPinjam(db *gorm.DB, id uint) ([]entities.Pinjam, error) {
 	res := []entities.Pinjam{}
 
-	qry := db.Find(&res)
+	qry := db.Where("id_user=?", id).Find(&res)
 
 	if qry.Error != nil {
 		return nil, qry.Error

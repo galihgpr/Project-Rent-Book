@@ -9,7 +9,7 @@ type Buku struct {
 	Jumlah   int    `gorm:"default:0"`
 	Status   bool   `gorm:"default:true"`
 	UserID   uint
-	Pinjam   Pinjam `gorm:"foreignkey:BukuID;references:id`
+	Pinjam   Pinjam `gorm:"foreignkey:BukuID;references:id"`
 }
 
 type DetailBuku struct {

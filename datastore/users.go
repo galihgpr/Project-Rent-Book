@@ -46,3 +46,14 @@ func (u *UserDB) Register(newUser entities.Users) (entities.Users, error) {
 	}
 	return newUser, nil
 }
+
+//EDIT PROFIL
+func UpdateUser(db *gorm.DB, updatedUser entities.Users) (entities.Users, error, string) {
+	qry := db.Save(&updatedUser)
+
+	if qry.Error != nil {
+		return entities.Users{}, qry.Error, "Edit Profil Gagal"
+	}
+
+	return updatedUser, nil, "Update Profil Berhasil"
+}
