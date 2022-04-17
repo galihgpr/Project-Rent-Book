@@ -54,5 +54,5 @@ func UpdateUser(db *gorm.DB, updatedUser entities.Users) (entities.Users, error,
 		return entities.Users{}, qry.Error, "UPDATE PROFIL GAGAL"
 	}
 
-	return updatedUser, nil, "UPDATE PROFIT BERHASIL"
+	return updatedUser, nil, "UPDATE PROFIL BERHASIL"
 }
